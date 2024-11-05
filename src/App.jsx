@@ -18,7 +18,7 @@ function App() {
   }
 
   return (
-    <div class="w-full bg-pink-500 p-3">
+    <div class="w-ful p-3">
       <BasicTable response={response} date={formattedDate} refetch={refetch}/>
     </div>
   )

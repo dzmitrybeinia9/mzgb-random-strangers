@@ -9,19 +9,46 @@ import {
 }
     from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
+import mzgbImage from '../assets/mzgb.jpeg'
 
 export default function BasicTable({ response, date, refetch }) {
 
     const columns = useMemo(() => [
-        { header: 'Place', accessorKey: 'place' },
-        { header: 'Team', accessorKey: 'team' },
-        { header: 'Rank', accessorKey: 'rank_name' },
-        { header: 'Games', accessorKey: 'games' },
-        { header: 'Wins', accessorKey: 'wins' },
-        { header: 'Points', accessorKey: 'points' },
-        // { header: 'Season Games', accessorKey: 'season_games' },
-        // { header: 'Season Wins', accessorKey: 'season_wins' },
-        // { header: 'Season Points', accessorKey: 'season_points' },
+        { 
+            header: 'Team', 
+            accessorKey: 'team',
+            className: 'w-28 sm:w-auto' // Smaller width on mobile
+        },
+        { 
+            header: 'Games', 
+            accessorKey: 'games',
+            className: 'w-20' // Fixed width for games
+        },
+        { 
+            header: 'Wins', 
+            accessorKey: 'wins',
+            className: 'hidden sm:table-cell' // Hide on mobile
+        },
+        { 
+            header: 'Points', 
+            accessorKey: 'points',
+            className: 'w-20' // Fixed width for points
+        },
+        { 
+            header: 'Season Games', 
+            accessorKey: 'season_games',
+            className: 'hidden lg:table-cell' // Hide on mobile and tablet
+        },
+        { 
+            header: 'Season Wins', 
+            accessorKey: 'season_wins',
+            className: 'hidden lg:table-cell' // Hide on mobile and tablet
+        },
+        { 
+            header: 'Season Points', 
+            accessorKey: 'season_points',
+            className: 'hidden lg:table-cell' // Hide on mobile and tablet
+        },
     ], []);
 
     const data = useMemo(() => response, []);
@@ -45,130 +72,140 @@ export default function BasicTable({ response, date, refetch }) {
     });
 
     return (
-        <div className="w-full bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6">
-            {/* Search panel */}
-            <div className="relative mb-6">
-                <label htmlFor="inputSearch" className="sr-only">
-                    Search
-                </label>
-                <input
-                    id="inputSearch"
-                    type="text"
-                    placeholder="Search..."
-                    value={filtering}
-                    onChange={(e) => setFiltering(e.target.value)}
-                    className="w-full px-4 py-3 pl-11 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-gray-200 transition-all duration-200"
-                />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
+        <div className="w-full min-w-[400px] bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6">
+            {/* Header with Logo and Search */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-center">
+                <img className='w-11 h-11' src={mzgbImage} alt="city" />
+                <div className="hidden sm:flex relative w-72">
+                    <input
+                        type="text"
+                        placeholder="Search teams..."
+                        value={filtering}
+                        onChange={(e) => setFiltering(e.target.value)}
+                        className="w-full px-4 py-2 pr-10 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-gray-200 transition-all duration-200"
+                    />
+                    <svg 
+                        className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 dark:text-gray-500" 
+                        fill="none" 
+                        stroke="currentColor" 
                         viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        stroke="currentColor"
-                        className="w-5 h-5 text-gray-400"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                </span>
+                </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-                <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <th
-                                        key={header.id}
-                                        onClick={header.column.getToggleSortingHandler()}
-                                        className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                            {header.column.getIsSorted() && (
-                                                <span className="text-blue-500">
-                                                    {header.column.getIsSorted() === 'asc' ? '↑' : '↓'}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </th>
+            {/* Table wrapper */}
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="inline-block min-w-[400px] w-full align-middle">
+                    <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                        <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-800">
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <tr key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <th
+                                                key={header.id}
+                                                onClick={header.column.getToggleSortingHandler()}
+                                                className={`px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 ${header.column.columnDef.className || ''}`}
+                                            >
+                                                <div className="flex items-center space-x-2">
+                                                    {flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                                    {header.column.getIsSorted() && (
+                                                        <span className="text-blue-500">
+                                                            {header.column.getIsSorted() === 'asc' ? '↑' : '↓'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </th>
+                                        ))}
+                                    </tr>
                                 ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
-                        {table.getRowModel().rows.map((row) => (
-                            <tr
-                                key={row.id}
-                                className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <td
-                                        key={cell.id}
-                                        className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap"
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                                {table.getRowModel().rows.map((row) => (
+                                    <tr
+                                        key={row.id}
+                                        className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
                                     >
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td
+                                                key={cell.id}
+                                                className={`px-6 py-4 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap ${cell.column.columnDef.className || ''}`}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>
+                                        ))}
+                                    </tr>
                                 ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            {/* Pagination */}
-            <div className="flex flex-wrap w-full justify-start mt-6 space-x-3">
-                <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => table.firstPage()}
-                >
-                    First
-                </button>
-                <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </button>
-                <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </button>
-                <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => table.lastPage()}
-                >
-                    Last
-                </button>
-            </div>
-            {/* Last Sync and Refetch */}
-            <div className="flex flex-wrap w-full justify-start mt-6 space-x-3">
-                <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => refetch()}
-                >
-                    Refetch
-                </button>
-                <div className="text-sm text-gray-600 dark:text-gray-300">
-                    Last sync: {date}
+            {/* Controls wrapper */}
+            <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                {/* Status and Refresh */}
+                <div className="flex items-center gap-3 order-2 sm:order-1">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                            Last sync: {date}
+                        </span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => refetch()}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
+                    >
+                        <svg 
+                            className="w-4 h-4" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+
+                {/* Pagination */}
+                <div className="flex flex-wrap gap-2 order-1 sm:order-2">
+                    <button
+                        type="button"
+                        className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => table.firstPage()}
+                    >
+                        First
+                    </button>
+                    <button
+                        type="button"
+                        className="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        type="button"
+                        className="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </button>
+                    <button
+                        type="button"
+                        className="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => table.lastPage()}
+                    >
+                        Last
+                    </button>
                 </div>
             </div>
         </div>

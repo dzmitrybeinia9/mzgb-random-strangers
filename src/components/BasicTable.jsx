@@ -17,12 +17,18 @@ export default function BasicTable({ response, date, refetch }) {
         { 
             header: 'Team', 
             accessorKey: 'team',
-            className: 'w-28 sm:w-auto' // Smaller width on mobile
+            className: 'w-10 sm:w-auto', // Smaller width on mobile
+            cell: ({ getValue }) => {
+                const teamName = getValue();
+                return teamName === 'Первые встречные' 
+                    ? `${teamName} 👑` 
+                    : teamName;
+            }
         },
         { 
             header: 'Games', 
             accessorKey: 'games',
-            className: 'w-20' // Fixed width for games
+            className: 'w-10' // Fixed width for games
         },
         { 
             header: 'Wins', 
@@ -32,7 +38,7 @@ export default function BasicTable({ response, date, refetch }) {
         { 
             header: 'Points', 
             accessorKey: 'points',
-            className: 'w-20' // Fixed width for points
+            className: 'w-10' // Fixed width for points
         },
         { 
             header: 'Season Games', 
@@ -72,7 +78,7 @@ export default function BasicTable({ response, date, refetch }) {
     });
 
     return (
-        <div className="w-full min-w-[400px] bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6">
+        <div className="w-full bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6">
             {/* Header with Logo and Search */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-center">
                 <img className='w-11 h-11' src={mzgbImage} alt="city" />
@@ -96,8 +102,8 @@ export default function BasicTable({ response, date, refetch }) {
             </div>
 
             {/* Table wrapper */}
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-                <div className="inline-block min-w-[400px] w-full align-middle">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="inline-block min-w-full align-middle">
                     <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                         <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead className="bg-gray-50 dark:bg-gray-800">
@@ -129,7 +135,11 @@ export default function BasicTable({ response, date, refetch }) {
                                 {table.getRowModel().rows.map((row) => (
                                     <tr
                                         key={row.id}
-                                        className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+                                        className={`transition-colors duration-150 ${
+                                            row.original.team === 'Первые встречные' 
+                                                ? 'bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30' 
+                                                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                                        }`}
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <td
@@ -203,6 +213,7 @@ export default function BasicTable({ response, date, refetch }) {
                         type="button"
                         className="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={() => table.lastPage()}
+                        disabled={!table.getCanNextPage()}
                     >
                         Last
                     </button>
